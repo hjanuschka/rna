@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Text, View, StyleSheet, Dimensions, WebView, NavigatorIOS } from 'react-native';
+import { Text, View, StyleSheet, Dimensions, WebView, NavigatorIOS, ScrollView } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
+import {
+  StackNavigator,
+} from 'react-navigation';
 
 
 const initialLayout = {
@@ -20,10 +23,12 @@ const f9 = () => <WebView source={{uri: 'http://mobil.krone.at/themen/angela-mer
 const f10 = () => <WebView source={{uri: 'http://mobil.krone.at/oesterreich'}} style={[ styles.container, { backgroundColor: '#ff4081' } ]} />;
 
 
-export default class NavigatorIOSApp extends React.Component {
+
+
+export  class NavigatorIOSApp extends React.Component {
   render() {
     return (
-      <NavigatorIOS
+      <Navigator
         initialRoute={{
           component: TabbedBrowsers,
           title: 'My Initial Scene',
@@ -56,7 +61,7 @@ class TabbedBrowsers extends PureComponent {
 
   _handleIndexChange = index => this.setState({ index });
 
-  _renderHeader = props => <TabBar style={{flex: 1}}  scrollEnabled={true} {...props} />;
+  _renderHeader = props => <TabBar useNativeDriver={true}  scrollEnabled={true} {...props} />;
 
   _renderScene = SceneMap({
     f1: f1,
@@ -74,13 +79,17 @@ class TabbedBrowsers extends PureComponent {
 
   render() {
     return (
+      <ScrollView scrollEnabled={false}  contentContainerStyle={{flex:1}}>
       <TabViewAnimated
         navigationState={this.state}
         renderHeader={this._renderHeader}
         renderScene={this._renderScene}
         onIndexChange={this._handleIndexChange}
-
+        initialLayout={initialLayout}
+        lazy={true}
       />
+
+      </ScrollView>
     );
   }
 }
@@ -90,3 +99,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+const App = StackNavigator({
+  Home: { screen: TabbedBrowsers , title: "Kronen Zeitung"}
+}, {
+  navigationOptions: {
+    titel: "Kronen Zeitung"
+  }
+});
+export default App;
